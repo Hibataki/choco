@@ -11,6 +11,7 @@ public class Main {
 	private static final String NAME = "hai_choco_agano";
 
 	public static void main(String[] args) {
+		System.out.println("Choco ver.1.0.0");
 		Token token = Token.getToken(KEY, SEC, NAME);
 		ExecutorService exec = Executors.newFixedThreadPool(2);
 		Stream stream = new Stream(Token.setStreamToken(token), new BotStreamListener(Token.setToken(token)));
