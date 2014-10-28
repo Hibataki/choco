@@ -94,10 +94,14 @@ public class Token {
 		}
 
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(childDir, true));) {
-			Stream<String> stream = Stream.of("key = " + key, "secret = " + secret, "token = " + token.getToken(), "tokensecret = " + token.getTokenSecret());
-			stream.forEach(x -> {
+			StringBuilder base = new StringBuilder().append(hash).append('.');
+			StringBuilder lkey = new StringBuilder("key = ").append(key);
+			StringBuilder lsecret = new StringBuilder("secret = ").append(secret);
+			StringBuilder ltoken = new StringBuilder("secret = ").append(token.getToken());
+			StringBuilder ltokensecret = new StringBuilder("secret = ").append(token.getTokenSecret());
+			Stream.of(lkey, lsecret, ltoken, ltokensecret).forEach(x -> {
 				try {
-					writer.write(hash + "." + x);
+					writer.write(new StringBuilder(base).append(x).toString());
 					writer.newLine();
 				} catch (Exception e) {
 				}
