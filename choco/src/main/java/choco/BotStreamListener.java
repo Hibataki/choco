@@ -7,18 +7,14 @@ import twitter4j.TwitterException;
 import twitter4j.User;
 import twitter4j.UserStreamAdapter;
 
-final class BotStreamListener extends UserStreamAdapter {
+class BotStreamListener extends UserStreamAdapter {
 	private static final String CHOCO = "ﾊｨ ﾁｮｺ(＊´∀`)ノ■ 阿賀野を可愛がってくれてありがと！ これからも頑張っちゃうからよろしくねっ！ きらり～ん☆彡";
 	private Twitter twitter;
-	private String name;
+	private long id;
 
-	public BotStreamListener(Twitter twitter) {
+	public BotStreamListener(Twitter twitter, long id) {
 		this.twitter = twitter;
-		try {
-			this.name = twitter.getScreenName();
-		} catch (TwitterException e) {
-			System.err.println("名前の取得に失敗しました");
-		}
+		this.id = id;
 	}
 
 	@Override
@@ -33,12 +29,11 @@ final class BotStreamListener extends UserStreamAdapter {
 
 	@Override
 	public void onFollow(User source, User from) {
-		try {
-			if ((name != null && !source.getScreenName().equals(name)) || name == null) { // ScreenNameがnullの場合, ScreenNameがnullでなくなおかつsourceのユーザーとScreenNameが一致していない場合にtrueを返す
+		if (source.getId() != id) {
+			try {
 				twitter.createFriendship(source.getId());
+			} catch (TwitterException e) {
 			}
-		} catch (TwitterException e) {
 		}
 	}
-
 }

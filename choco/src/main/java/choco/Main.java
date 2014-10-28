@@ -1,31 +1,22 @@
 package choco;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import com.hibataki.mytwitterlib.Token;
+import twitter4j.Twitter;
+import twitter4j.TwitterFactory;
+import twitter4j.TwitterStream;
+import twitter4j.TwitterStreamFactory;
+import twitter4j.conf.Configuration;
 
 public class Main {
-	private static final String KEY = "";
-	private static final String SEC = "";
-	private static final String NAME = "hai_choco_agano";
+	private static final String KEY = "T13mrIq6zP9qB436WeYYxQ1j3";
+	private static final String SEC = "VFcHMh07yG9LUUzDV6AhmzSqzdVhOhm8870XLW59hQr4Mo9i5V";
+	private static final long ID = 2829561398L;
 
 	public static void main(String[] args) {
 		System.out.println("Choco ver.1.0.0");
-		Token token = Token.getToken(KEY, SEC, NAME);
-		ExecutorService exec = Executors.newFixedThreadPool(2);
-		Stream stream = new Stream(Token.setStreamToken(token), new BotStreamListener(Token.setToken(token)));
-		try {
-			exec.execute(stream);
-			exec.execute(new Command() {
-				@Override
-				public void exit() {
-					stream.exit();
-				}
-			});
-		} finally {
-			exec.shutdown();
-		}
+		Configuration cb = new Token(KEY, SEC, ID).configBuild();
+		Twitter twitter = new TwitterFactory(cb).getInstance();
+		TwitterStream stream = new TwitterStreamFactory(cb).getInstance();
+		stream.addListener(new BotStreamListener(twitter, ID));
+		stream.user();
 	}
-
 }
