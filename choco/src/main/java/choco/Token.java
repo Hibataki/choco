@@ -50,13 +50,8 @@ public class Token {
 
 	private void load() {
 		try (BufferedReader reader = new BufferedReader(new FileReader(childDir))) {
-			this.prop = reader.lines().filter(x -> {
-				return x.contains("=") && x.startsWith(String.valueOf(hash));
-			}).collect(Collectors.toMap(x -> {
-				return x.split("=")[0].trim();
-			}, x -> {
-				return x.split("=")[1].trim();
-			}));
+			this.prop = reader.lines().filter(x -> x.contains("=") && x.startsWith(String.valueOf(hash))
+					).collect(Collectors.toMap(x -> x.split("=")[0].trim(), x -> x.split("=")[1].trim()));
 		} catch (IOException e) {
 		}
 
@@ -97,8 +92,8 @@ public class Token {
 			StringBuilder base = new StringBuilder().append(hash).append('.');
 			StringBuilder lkey = new StringBuilder("key = ").append(key);
 			StringBuilder lsecret = new StringBuilder("secret = ").append(secret);
-			StringBuilder ltoken = new StringBuilder("secret = ").append(token.getToken());
-			StringBuilder ltokensecret = new StringBuilder("secret = ").append(token.getTokenSecret());
+			StringBuilder ltoken = new StringBuilder("token = ").append(token.getToken());
+			StringBuilder ltokensecret = new StringBuilder("tokensecret = ").append(token.getTokenSecret());
 			Stream.of(lkey, lsecret, ltoken, ltokensecret).forEach(x -> {
 				try {
 					writer.write(new StringBuilder(base).append(x).toString());
