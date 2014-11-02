@@ -15,18 +15,23 @@ final class BotStreamListener extends UserStreamAdapter {
 	private Twitter twitter;
 	private LongPredicate lp;
 	private Predicate<String> ps;
+	private Predicate<String> ps2;
 
 	public BotStreamListener(Twitter twitter, long id) {
 		this.twitter = twitter;
 		this.lp = s -> s != id;
-		this.ps = "@hai_choco_agano チョコ"::contains;
+		this.ps = x -> x.contains("@hai_choco_agano チョコ");
+		this.ps2 = x -> x.contains("@hai_choco_agano gemochi");
 	}
 
 	@Override
 	public void onStatus(Status status) {
 		try {
-			if (ps.test(status.getText()))
-				twitter.updateStatus(getChoco(status));
+			if (ps.test(status.getText())) {
+				twitter.updateStatus(getChoco(status, CHOCO));
+			} else if (ps2.test(status.getText())) {
+				twitter.updateStatus(getChoco(status, Gemochi.gemochi()));
+			}
 		} catch (TwitterException ignore) {
 		}
 	}
@@ -40,7 +45,7 @@ final class BotStreamListener extends UserStreamAdapter {
 		}
 	}
 
-	private StatusUpdate getChoco(Status status) {
-		return new StatusUpdate("@" + status.getUser().getScreenName() + " " + CHOCO).inReplyToStatusId(status.getId());
+	private StatusUpdate getChoco(Status status, String str) {
+		return new StatusUpdate("@" + status.getUser().getScreenName() + " " + str).inReplyToStatusId(status.getId());
 	}
 }
