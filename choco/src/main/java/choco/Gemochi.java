@@ -1,20 +1,27 @@
 package choco;
 
 import java.text.NumberFormat;
+import java.util.Random;
 
 public class Gemochi {
-	public static String BR = System.lineSeparator();
+	public static final String SEPARATOR = System.lineSeparator();
+	private static final NumberFormat FORMAT = NumberFormat.getInstance();
+	private static final Random RANDOM;
+	static {
+		FORMAT.setMaximumFractionDigits(2);
+		RANDOM = new Random(new Random().nextLong());
+	}
 
 	/**
 	 * まておれのげもち
 	 * @return げもち
 	 */
 	public static String gemochi() {
-		String str = "まて" + bbop("おれのげもち") + BR +
-				"　  　彡⌒ミ" + BR +
-				"-=≡（ ՞ةڼ◔ ） 　　三(    ՞ةڼ◔)" + BR +
-				"-=≡　/　つ_つ 　　　　三(    ՞ةڼ◔)"+ BR+
-				"　-=  人　　Y 　　三(    ՞ةڼ◔)"+BR+
+		String str = "まて" + bbop("おれのげもち") + SEPARATOR +
+				"　  　彡⌒ミ" + SEPARATOR +
+				"-=≡（ ՞ةڼ◔ ） 　　三(    ՞ةڼ◔)" + SEPARATOR +
+				"-=≡　/　つ_つ 　　　　三(    ՞ةڼ◔)"+ SEPARATOR +
+				"　-=  人　　Y 　　三(    ՞ةڼ◔)"+ SEPARATOR +
 				"　　レ' ＼_フ";
 		return str;
 	}
@@ -27,38 +34,17 @@ public class Gemochi {
 	public static String bbop(String str) {
 		char[] chars = str.toCharArray();
 		StringBuilder build = new StringBuilder();
-		int length = chars.length;
 		int count = 0;
-		for (int i = 0; i < length; i++) {
-			char c = chars[random(length)];
+
+		for (int i = 0; i < chars.length; i++) {
+			char c = chars[RANDOM.nextInt(i)];
 			build.append(c);
 			if (c == chars[i]) {
 				count++;
 			}
 		}
 
-		double d = count != 0 ? 100.0 / length * count : 0;
-		NumberFormat nf = NumberFormat.getInstance();
-		nf.setMaximumFractionDigits(2);
-		build.append(" (").append(nf.format(d)).append("%)");
-		return build.toString();
-	}
-
-	/**
-	 * 0からi(最大10)までの擬似乱数を取得するメソッド
-	 * @param i 上限値
-	 * @return 上限値までの擬似乱数
-	 */
-	public static int random(int i) {
-		if (i > 10) {
-			throw new IllegalArgumentException();
-		}
-		int rand;
-		for (;;) {
-			rand = (int) (Math.random() * 10);
-			if (rand < i) {
-				return rand;
-			}
-		}
+		double d = count != 0 ? 100.0 / chars.length * count : 0;
+		return build.append(" (").append(FORMAT.format(d)).append("%)").toString();
 	}
 }
