@@ -21,11 +21,11 @@ public final class BotStreamListener extends UserStreamAdapter {
 		String text = status.getText();
 		if (text != null && !text.contains("RT")) {
 			try {
-				if (text.contains("@hai_choco_agano チョコ")) {
+				if (text.contains("(@hai_choco_agano") && text.endsWith(")")) {
 					twitter.updateStatus(getStatus(status, UpdateName.name(twitter, text)));
-				} else if (text.contains("@hai_choco_agano gemochi")) {
+				} else if (text.contains("@hai_choco_agano チョコ")) {
 					twitter.updateStatus(getStatus(status, Choco.choco()));
-				} else if (text.contains("(@hai_choco_agano") && text.endsWith(")")) {
+				} else if (text.contains("@hai_choco_agano gemochi")) {
 					twitter.updateStatus(getStatus(status, Gemochi.gemochi()));
 				}
 			} catch (TwitterException ignore) {
