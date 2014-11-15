@@ -17,14 +17,13 @@ public final class Gemochi {
 	 * @return げもち
 	 */
 	public static String gemochi() {
-		// TODO builder
-		String str = "まて" + bbop("おれのげもち") + SEPARATOR +
-				"　  　彡⌒ミ" + SEPARATOR +
-				"-=≡（ ՞ةڼ◔ ） 　　三(    ՞ةڼ◔)" + SEPARATOR +
-				"-=≡　/　つ_つ 　　　　三(    ՞ةڼ◔)"+ SEPARATOR +
-				"　-=  人　　Y 　　三(    ՞ةڼ◔)"+ SEPARATOR +
-				"　　レ' ＼_フ";
-		return str;
+		return new StringBuilder("まて")
+		.append(bbop("おれのげもち")).append(SEPARATOR)
+		.append("　  　彡⌒ミ").append(SEPARATOR)
+		.append("-=≡（ ՞ةڼ◔ ） 　　三(    ՞ةڼ◔)").append(SEPARATOR)
+		.append("-=≡　/　つ_つ 　　　　三(    ՞ةڼ◔)").append(SEPARATOR)
+		.append("　-=  人　　Y 　　三(    ՞ةڼ◔)").append(SEPARATOR)
+		.append("　　レ' ＼_フ").toString();
 	}
 
 	/**
