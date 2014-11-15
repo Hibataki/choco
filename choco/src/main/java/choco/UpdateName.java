@@ -3,8 +3,7 @@ package choco;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
-public class UpdateName {
-
+public final class UpdateName {
 	public static String name(Twitter twitter, String text) {
 		String name = text.substring(0, text.indexOf("(@"));
 		if (name.length() > 20) {

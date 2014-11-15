@@ -3,7 +3,7 @@ package choco;
 import java.text.NumberFormat;
 import java.util.Random;
 
-public class Gemochi {
+public final class Gemochi {
 	public static final String SEPARATOR = System.lineSeparator();
 	private static final NumberFormat FORMAT = NumberFormat.getInstance();
 	private static final Random RANDOM;
@@ -17,6 +17,7 @@ public class Gemochi {
 	 * @return げもち
 	 */
 	public static String gemochi() {
+		// TODO builder
 		String str = "まて" + bbop("おれのげもち") + SEPARATOR +
 				"　  　彡⌒ミ" + SEPARATOR +
 				"-=≡（ ՞ةڼ◔ ） 　　三(    ՞ةڼ◔)" + SEPARATOR +

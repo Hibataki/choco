@@ -6,7 +6,7 @@ import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.Configuration;
 
-public class Main {
+public final class Main {
 	private static final String KEY = "";
 	private static final String SEC = "";
 	private static final long ID = 2829561398L;

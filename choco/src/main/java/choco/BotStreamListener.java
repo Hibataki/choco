@@ -1,6 +1,5 @@
 package choco;
 
-import java.util.function.LongPredicate;
 import java.util.function.Predicate;
 
 import twitter4j.Status;
@@ -10,10 +9,9 @@ import twitter4j.TwitterException;
 import twitter4j.User;
 import twitter4j.UserStreamAdapter;
 
-final class BotStreamListener extends UserStreamAdapter {
+public final class BotStreamListener extends UserStreamAdapter {
 	private final Twitter twitter;
-	private final LongPredicate lp;
-	private final Predicate<String> rt;
+	private final long id;
 	private final Predicate<String> ps1;
 	private final Predicate<String> ps2;
 	private final Predicate<String> ps3;
@@ -21,8 +19,7 @@ final class BotStreamListener extends UserStreamAdapter {
 
 	public BotStreamListener(Twitter twitter, long id) {
 		this.twitter = twitter;
-		this.lp = s -> s != id;
-		this.rt = x -> x.contains("RT");
+		this.id = id;
 		this.ps1 = x -> x.contains("@hai_choco_agano チョコ");
 		this.ps2 = x -> x.contains("@hai_choco_agano gemochi");
 		this.ps3 = x -> x.contains("(@hai_choco_agano") && x.endsWith(")");
@@ -31,7 +28,7 @@ final class BotStreamListener extends UserStreamAdapter {
 	@Override
 	public void onStatus(Status status) {
 		text = status.getText();
-		if (rt.test(text)) {
+		if (text.contains("RT")) {
 			return;
 		}
 		checkAndPost(ps1, getStatus(status, Choco.choco()));
@@ -42,7 +39,7 @@ final class BotStreamListener extends UserStreamAdapter {
 	@Override
 	public void onFollow(User source, User from) {
 		try {
-			if (lp.test(source.getId())) {
+			if (id != source.getId()) {
 				Thread.sleep(100);
 				twitter.createFriendship(source.getId());
 			}
