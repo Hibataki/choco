@@ -1,7 +1,5 @@
 package choco;
 
-import java.util.function.Predicate;
-
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
@@ -12,28 +10,27 @@ import twitter4j.UserStreamAdapter;
 public final class BotStreamListener extends UserStreamAdapter {
 	private final Twitter twitter;
 	private final long id;
-	private final Predicate<String> ps1;
-	private final Predicate<String> ps2;
-	private final Predicate<String> ps3;
-	private String text;
 
 	public BotStreamListener(Twitter twitter, long id) {
 		this.twitter = twitter;
 		this.id = id;
-		this.ps1 = x -> x.contains("@hai_choco_agano チョコ");
-		this.ps2 = x -> x.contains("@hai_choco_agano gemochi");
-		this.ps3 = x -> x.contains("(@hai_choco_agano") && x.endsWith(")");
 	}
 
 	@Override
 	public void onStatus(Status status) {
-		text = status.getText();
-		if (text.contains("RT")) {
-			return;
+		String text = status.getText();
+		if (text != null && !text.contains("RT")) {
+			try {
+				if (text.contains("@hai_choco_agano チョコ")) {
+					twitter.updateStatus(getStatus(status, UpdateName.name(twitter, text)));
+				} else if (text.contains("@hai_choco_agano gemochi")) {
+					twitter.updateStatus(getStatus(status, Choco.choco()));
+				} else if (text.contains("(@hai_choco_agano") && text.endsWith(")")) {
+					twitter.updateStatus(getStatus(status, Gemochi.gemochi()));
+				}
+			} catch (TwitterException ignore) {
+			}
 		}
-		checkAndPost(ps1, getStatus(status, Choco.choco()));
-		checkAndPost(ps2, getStatus(status, Gemochi.gemochi()));
-		checkAndPost(ps3, getStatus(status, UpdateName.name(twitter, text)));
 	}
 
 	@Override
@@ -44,16 +41,6 @@ public final class BotStreamListener extends UserStreamAdapter {
 				twitter.createFriendship(source.getId());
 			}
 		} catch (TwitterException | InterruptedException ignore) {
-		}
-	}
-
-	private void checkAndPost(Predicate<String> pre, StatusUpdate stup) {
-		try {
-			if (pre.test(text)) {
-				twitter.updateStatus(stup);
-				text = null;
-			}
-		} catch (TwitterException ignore) {
 		}
 	}
 

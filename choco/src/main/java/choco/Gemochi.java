@@ -37,7 +37,7 @@ public final class Gemochi {
 		int count = 0;
 
 		for (int i = 0; i < chars.length; i++) {
-			char c = chars[RANDOM.nextInt(i)];
+			char c = chars[RANDOM.nextInt(chars.length)];
 			build.append(c);
 			if (c == chars[i]) {
 				count++;
