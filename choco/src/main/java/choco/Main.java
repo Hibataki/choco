@@ -12,7 +12,7 @@ public final class Main {
 	private static final long ID = 2829561398L;
 
 	public static void main(String[] args) {
-		System.out.println("Choco ver.1.0.0");
+		System.out.println("Choco ver.2.0.0");
 		Configuration cb = new Token(KEY, SEC, ID).configBuild();
 		Twitter twitter = new TwitterFactory(cb).getInstance();
 		TwitterStream stream = new TwitterStreamFactory(cb).getInstance();
