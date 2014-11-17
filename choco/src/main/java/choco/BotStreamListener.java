@@ -1,5 +1,7 @@
 package choco;
 
+import java.util.logging.Logger;
+
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
@@ -8,6 +10,7 @@ import twitter4j.User;
 import twitter4j.UserStreamAdapter;
 
 public final class BotStreamListener extends UserStreamAdapter {
+	private static final Logger LOGGER = Logger.getLogger("BotStreamListener");
 	private final Twitter twitter;
 	private final long id;
 
@@ -28,7 +31,8 @@ public final class BotStreamListener extends UserStreamAdapter {
 				} else if (text.contains("@hai_choco_agano gemochi")) {
 					twitter.updateStatus(getStatus(status, Gemochi.gemochi()));
 				}
-			} catch (TwitterException ignore) {
+			} catch (TwitterException e) {
+				LOGGER.info(() -> e.getMessage());
 			}
 		}
 	}
@@ -40,7 +44,8 @@ public final class BotStreamListener extends UserStreamAdapter {
 				Thread.sleep(100);
 				twitter.createFriendship(source.getId());
 			}
-		} catch (TwitterException | InterruptedException ignore) {
+		} catch (TwitterException | InterruptedException e) {
+			LOGGER.info(() -> e.getMessage());
 		}
 	}
 
