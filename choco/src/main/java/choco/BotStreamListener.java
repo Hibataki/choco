@@ -1,5 +1,11 @@
 package choco;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
 import twitter4j.Status;
@@ -11,12 +17,15 @@ import twitter4j.UserStreamAdapter;
 
 public final class BotStreamListener extends UserStreamAdapter {
 	private static final Logger LOGGER = Logger.getLogger("BotStreamListener");
+
 	private final Twitter twitter;
 	private final long id;
+	private final File file;
 
-	public BotStreamListener(Twitter twitter, long id) {
+	public BotStreamListener(Twitter twitter, long id, File file) {
 		this.twitter = twitter;
 		this.id = id;
+		this.file = file;
 	}
 
 	@Override
@@ -24,7 +33,9 @@ public final class BotStreamListener extends UserStreamAdapter {
 		String text = status.getText();
 		if (text != null && !text.contains("RT")) {
 			try {
-				if (text.contains("(@hai_choco_agano") && text.endsWith(")")) {
+				if (status.getUser().getId() == id) {
+					adminCommand(text, status);
+				} else if (text.contains("(@hai_choco_agano") && text.endsWith(")")) {
 					twitter.updateStatus(getStatus(status, UpdateName.name(twitter, text)));
 				} else if (text.contains("@hai_choco_agano チョコ")) {
 					twitter.updateStatus(getStatus(status, Choco.choco()));
@@ -35,6 +46,22 @@ public final class BotStreamListener extends UserStreamAdapter {
 				LOGGER.info(() -> e.getMessage());
 			}
 		}
+	}
+
+	private void adminCommand(String text, Status status) throws TwitterException {
+		if (text.startsWith("add")) {
+			text = text.replaceAll("\r", "").replaceAll("\n", "\\\\n").substring(4);
+			twitter.destroyStatus(status.getId());
+			try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true), StandardCharsets.UTF_8))) {
+				bw.write(text);
+				bw.newLine();
+				twitter.sendDirectMessage(id, text.substring(0, 20) + "...のツイートが正常に登録されました");
+			} catch (IOException e) {
+				LOGGER.warning(() -> e.getMessage());
+				twitter.sendDirectMessage(id, text.substring(0, 20) + "...のツイートの登録に失敗しました");
+			}
+		}
+		// TODO delete, editの追加
 	}
 
 	@Override
