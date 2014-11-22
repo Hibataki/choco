@@ -41,17 +41,40 @@ public final class BotStreamListener extends UserStreamAdapter {
 			try {
 				if (status.getUser().getId() == id) {
 					adminCommand();
-				} else if (text.contains("(@hai_choco_agano") && text.endsWith(")")) {
-					getStatus(UpdateName.name(twitter, text));
-				} else if (text.contains("@hai_choco_agano チョコ")) {
-					getStatus(Choco.choco());
-				} else if (text.contains("@hai_choco_agano gemochi")) {
-					getStatus(Gemochi.gemochi());
+				} else if (text.contains("@hai_choco_agano")) {
+					reply();
 				}
 			} catch (TwitterException e) {
 				LOGGER.info(() -> e.getMessage());
 			}
 		}
+	}
+
+	@Override
+	public void onFollow(User source, User from) {
+		try {
+			if (id != source.getId()) {
+				Thread.sleep(100);
+				twitter.createFriendship(source.getId());
+			}
+		} catch (TwitterException | InterruptedException e) {
+			LOGGER.info(() -> e.getMessage());
+		}
+	}
+
+	private void reply() throws TwitterException {
+		String text = status.getText();
+		if (text.contains("チョコ")) {
+			getStatus(Choco.choco());
+		} else if (text.contains("gemochi")) {
+			getStatus(Gemochi.gemochi());
+		} else if (text.contains("(@") && text.endsWith(")")) {
+			getStatus(UpdateName.name(twitter, text));
+		}
+	}
+
+	private void getStatus(String str) throws TwitterException {
+		twitter.updateStatus(new StatusUpdate("@" + status.getUser().getScreenName() + " " + str).inReplyToStatusId(status.getId()));
 	}
 
 	private void adminCommand() throws TwitterException {
@@ -69,21 +92,5 @@ public final class BotStreamListener extends UserStreamAdapter {
 			twitter.destroyStatus(status.getId());
 		}
 		// TODO delete, editの追加
-	}
-
-	@Override
-	public void onFollow(User source, User from) {
-		try {
-			if (id != source.getId()) {
-				Thread.sleep(100);
-				twitter.createFriendship(source.getId());
-			}
-		} catch (TwitterException | InterruptedException e) {
-			LOGGER.info(() -> e.getMessage());
-		}
-	}
-
-	private void getStatus(String str) throws TwitterException {
-		twitter.updateStatus(new StatusUpdate("@" + status.getUser().getScreenName() + " " + str).inReplyToStatusId(status.getId()));
 	}
 }

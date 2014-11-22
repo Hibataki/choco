@@ -14,6 +14,7 @@ import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -103,15 +104,22 @@ public class Token {
 			PARENT_DIR.mkdirs();
 		}
 
-		String separator = System.lineSeparator();
 		StringBuilder base = new StringBuilder().append(hash).append(".");
-		StringBuilder result = new StringBuilder(base).append("key = ").append(key).append(separator)
-				.append(base).append("secret = ").append(secret).append(separator)
-				.append(base).append("token = ").append(token.getToken()).append(separator)
-				.append(base).append("tokensecret = ").append(token.getTokenSecret()).append(separator);
+		StringBuilder skey = new StringBuilder(base).append("key = ").append(key);
+		StringBuilder ssecret = new StringBuilder(base).append("secret = ").append(secret);
+		StringBuilder stoken = new StringBuilder(base).append("token = ").append(token.getToken());
+		StringBuilder stsecret = new StringBuilder(base).append("tokensecret = ").append(token.getTokenSecret());
+		Stream<StringBuilder> bstream = Stream.of(skey, ssecret, stoken, stsecret);
 
 		try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(childDir, true), "UTF-8"))) {
-			bw.write(result.toString());
+			bstream.forEach(x -> {
+				try {
+					bw.write(x.toString());
+					bw.newLine();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
 			bw.flush();
 		} catch (IOException e) {
 			LOGGER.warning(() -> e.getMessage());

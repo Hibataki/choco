@@ -15,7 +15,7 @@ public final class Main {
 	public static final File TWEET_FILE = new File("tweet_file.txt");
 
 	public static void main(String[] args) {
-		System.out.println("Choco ver.3.0.0");
+		System.out.println("Choco ver.3.0.1");
 		Configuration cb = new Token(KEY, SEC, ID).configBuild();
 		Twitter twitter = new TwitterFactory(cb).getInstance();
 		TwitterStream stream = new TwitterStreamFactory(cb).getInstance();
