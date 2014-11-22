@@ -23,10 +23,6 @@ public final class Main {
 		Thread t = new Thread(r);
 		stream.addListener(new BotStreamListener(twitter, ID, TWEET_FILE));
 		stream.user();
-		try {
-			t.start();
-		} finally {
-			r.close();
-		}
+		t.start();
 	}
 }
