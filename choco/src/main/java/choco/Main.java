@@ -15,13 +15,18 @@ public final class Main {
 	public static final File TWEET_FILE = new File("tweet_file.txt");
 
 	public static void main(String[] args) {
-		System.out.println("Choco ver.3.0.1");
+		System.out.println("Choco ver.3.0.2");
 		Configuration cb = new Token(KEY, SEC, ID).configBuild();
 		Twitter twitter = new TwitterFactory(cb).getInstance();
 		TwitterStream stream = new TwitterStreamFactory(cb).getInstance();
-		Thread t = new Thread(new Bot(twitter, 600, TWEET_FILE));
+		Bot r = new Bot(twitter, 600, TWEET_FILE);
+		Thread t = new Thread(r);
 		stream.addListener(new BotStreamListener(twitter, ID, TWEET_FILE));
 		stream.user();
-		t.start();
+		try {
+			t.start();
+		} finally {
+			r.close();
+		}
 	}
 }

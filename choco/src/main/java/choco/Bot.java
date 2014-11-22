@@ -6,7 +6,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -24,6 +26,9 @@ public class Bot implements Runnable {
 	private final File file;
 	private boolean closed;
 
+	private static SimpleDateFormat sdf = new SimpleDateFormat("[yyyy/MM/dd HH:mm:ss]");
+	private static Calendar cal = Calendar.getInstance();
+
 	public Bot(Twitter twitter, int sleepSecond, File file) {
 		this.twitter = twitter;
 		this.sleepSecond = sleepSecond * 1000;
@@ -32,11 +37,16 @@ public class Bot implements Runnable {
 
 	@Override
 	public void run() {
+		try {
+			twitter.updateStatus(sdf.format(cal.getTime()) + " Choco ver.3.0.2 が起動しました");
+		} catch (TwitterException ignore) {
+		}
+
 		while (!closed) {
 			Random random = new Random(new Random().nextLong());
 			List<String> list = loadText();
 			long now = 0;
-			while (now < HOUR) {
+			while (!closed && now < HOUR) {
 				try {
 					twitter.updateStatus(list.get(random.nextInt(list.size())));
 					Thread.sleep(sleepSecond);
@@ -50,6 +60,10 @@ public class Bot implements Runnable {
 
 	public void close() {
 		this.closed = true;
+		try {
+			twitter.updateStatus(sdf.format(cal.getTime()) + " Botが稼働を終了しました");
+		} catch (TwitterException ignore) {
+		}
 	}
 
 	private List<String> loadText() {
