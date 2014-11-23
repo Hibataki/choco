@@ -47,7 +47,9 @@ public final class BotStreamListener extends UserStreamAdapter {
 				if (status.getUser().getId() == id) {
 					adminCommand();
 				}
-				reply();
+				if (text.contains("@hai_choco_agano")) {
+					reply();
+				}
 			} catch (TwitterException e) {
 				LOGGER.info(() -> e.getMessage());
 			}
