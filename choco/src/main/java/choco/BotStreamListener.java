@@ -1,11 +1,16 @@
 package choco;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import twitter4j.Status;
@@ -41,9 +46,8 @@ public final class BotStreamListener extends UserStreamAdapter {
 			try {
 				if (status.getUser().getId() == id) {
 					adminCommand();
-				} else if (text.contains("@hai_choco_agano")) {
-					reply();
 				}
+				reply();
 			} catch (TwitterException e) {
 				LOGGER.info(() -> e.getMessage());
 			}
@@ -90,7 +94,29 @@ public final class BotStreamListener extends UserStreamAdapter {
 				twitter.sendDirectMessage(id, "「" + text.substring(0, 20) + "...」のツイートの登録に失敗しました");
 			}
 			twitter.destroyStatus(status.getId());
+		} else if (text.startsWith("@hai_choco_agano delete")) {
+			List<String> list = new ArrayList<>();
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
+				String tx = twitter.showStatus(status.getInReplyToStatusId()).getText().replaceAll("\r", "").replaceAll("\n", "\\\\n");
+				String line;
+				while ((line = br.readLine()) != null) {
+					if (!tx.equals(line)) {
+						list.add(line);
+					}
+				}
+				twitter.sendDirectMessage(id, "「" + tx.substring(0, 20) + "...」のツイートが正常に削除されました");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
+				for (int i = 0; i < list.size(); i++) {
+					bw.write(list.get(i));
+					bw.newLine();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			twitter.destroyStatus(status.getId());
 		}
-		// TODO delete, editの追加
 	}
 }
